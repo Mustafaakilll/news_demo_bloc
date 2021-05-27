@@ -44,7 +44,7 @@ class NewsPage extends StatelessWidget {
       child: Card(
         child: Row(
           children: [
-            _newsImage(news.urlToImage),
+            _newsImage(news.urlToImage!),
             const SizedBox(width: 10),
             _newsTitle(news.title),
             const Icon(Icons.keyboard_arrow_right),

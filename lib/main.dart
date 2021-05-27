@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'news_bloc/news_page.dart';
+import 'app_navigation_bloc/app_navigation_cubit.dart';
+import 'app_navigator.dart';
 import 'news_bloc/news_repository.dart';
 
 void main() {
@@ -16,7 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       home: RepositoryProvider(
         create: (context) => NewsRepository(Dio()),
-        child: const NewsPage(),
+        child: BlocProvider(
+          create: (context) => AppNavigationCubit(),
+          child: AppNavigator(),
+        ),
       ),
     );
   }
