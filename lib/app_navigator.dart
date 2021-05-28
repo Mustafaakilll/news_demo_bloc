@@ -14,6 +14,10 @@ class AppNavigator extends StatelessWidget {
           body: state is NewsPageState ? const NewsPage() : SettingsPage(),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: state is NewsPageState ? 0 : 1,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.blue,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.white,
             items: [
               const BottomNavigationBarItem(
                   icon: Icon(Icons.home), label: 'Haberler'),
@@ -23,7 +27,6 @@ class AppNavigator extends StatelessWidget {
             onTap: (value) {
               if (value == 1) {
                 context.read<AppNavigationCubit>().showSettingsPage();
-                print('value 1 Geldi');
               } else {
                 context.read<AppNavigationCubit>().showNewsPage();
               }
