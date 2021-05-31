@@ -7,12 +7,10 @@ class AppNavigationCubit extends Cubit<AppNavigationState> {
   AppNavigationCubit() : super(NewsPageState());
 
   void showNewsPage() {
-    print('News Page');
     emit(NewsPageState());
   }
 
   void showSettingsPage() {
     emit(SettingsPageState());
-    print('Settings Page');
   }
 }

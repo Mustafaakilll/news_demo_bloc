@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:news_demo_bloc/authentication/login_bloc/login_view.dart';
 // ignore: library_prefixes
 import 'package:path_provider/path_provider.dart' as pathProvider;
 
@@ -14,6 +16,7 @@ import 'settings_bloc/theme_bloc/theme_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   final appDocumentaryDirectory =
       await pathProvider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentaryDirectory.path);
@@ -43,7 +46,7 @@ class MyApp extends StatelessWidget {
               ],
               child: BlocProvider(
                 create: (context) => AppNavigationCubit(),
-                child: AppNavigator(),
+                child: LoginView(),
               ),
             ),
           );
