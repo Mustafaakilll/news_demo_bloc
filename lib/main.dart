@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:news_demo_bloc/authentication/login_bloc/login_view.dart';
+import 'package:news_demo_bloc/authentication/sign_up_bloc/sign_up_view.dart';
+import 'authentication/log_in_bloc/login_view.dart';
 // ignore: library_prefixes
 import 'package:path_provider/path_provider.dart' as pathProvider;
 
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
               ],
               child: BlocProvider(
                 create: (context) => AppNavigationCubit(),
-                child: LoginView(),
+                child: SignUpView(),
               ),
             ),
           );

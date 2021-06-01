@@ -22,4 +22,20 @@ class AuthRepository {
       }
     }
   }
+
+  Future<User?> signUp(String email, String password) async {
+    try {
+      final _user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      return _user.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        throw Exception('Zayif Parola');
+      } else if (e.code == 'email-already-in-use') {
+        throw Exception('Eposta Kullanimda');
+      }
+    } catch (err) {
+      throw Exception('Hata $err');
+    }
+  }
 }
