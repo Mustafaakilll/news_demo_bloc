@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_demo_bloc/authentication/sign_up_bloc/sign_up_event.dart';
-import 'package:news_demo_bloc/authentication/sign_up_bloc/sign_up_state.dart';
 
+import '../../app_navigation_bloc/app_navigation_cubit.dart';
+import '../auth_cubit.dart';
 import '../auth_repository.dart';
+import '../form_submission_state.dart';
 import 'sign_up_bloc.dart';
+import 'sign_up_event.dart';
+import 'sign_up_state.dart';
 
 class SignUpView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -12,34 +15,62 @@ class SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SignUpBloc(context.read<AuthRepository>()),
+      create: (context) => SignUpBloc(
+        context.read<AuthRepository>(),
+        context.read<AppNavigationCubit>(),
+      ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: _appBar(),
         body: Padding(
           padding: const EdgeInsets.all(30),
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              _signUpForm(),
-              _googleSignIn(),
-            ],
-          ),
+          child: _signUpForm(),
         ),
       ),
     );
   }
 
+  AppBar _appBar() {
+    return AppBar(
+      title: const Text('Kayit Ol'),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
+    );
+  }
+
   Widget _signUpForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _emailField(),
-          _passwordField(),
-          _submitButton(),
-          _signInButton(),
-        ],
-      ),
+    return BlocConsumer<SignUpBloc, SignUpState>(
+      listener: (context, state) {
+        final formStatus = state.formStatus;
+        if (formStatus is SubmissionFailure) {
+          _snackBarMessenger(formStatus.exception.toString(), context);
+        } else if (formStatus is SubmissionSuccess) {
+          _snackBarMessenger('Hos Geldiniz ${formStatus.user!.email}', context);
+        }
+      },
+      builder: (context, state) {
+        return Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flex(
+                direction: Axis.vertical,
+                children: [
+                  _emailField(),
+                  _passwordField(),
+                  _submitButton(),
+                ],
+              ),
+              Flex(
+                direction: Axis.vertical,
+                children: [_signInButton(), _googleSignIn()],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -85,7 +116,7 @@ class SignUpView extends StatelessWidget {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: () => context.read<SignUpBloc>().add(SignUpSubmitted()),
-          child: const Text('Giris Yap'),
+          child: const Text('Kayit Ol'),
         );
       },
     );
@@ -95,7 +126,7 @@ class SignUpView extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return TextButton(
-          onPressed: () {},
+          onPressed: () => context.read<AuthNavigationCubit>().showLogin(),
           child: Text(
             'Hemen Giris Yap',
             style: Theme.of(context)

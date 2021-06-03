@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../app_navigation_bloc/app_navigation_cubit.dart';
+import '../auth_cubit.dart';
 import '../auth_repository.dart';
 import '../form_submission_state.dart';
 import 'login_bloc.dart';
@@ -13,19 +15,27 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(context.read<AuthRepository>()),
+      create: (context) => LoginBloc(
+        context.read<AuthRepository>(),
+        context.read<AppNavigationCubit>(),
+      ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: _appBar(),
         body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              _loginForm(),
-              _googleSignIn(),
-            ],
-          ),
+          padding: const EdgeInsets.all(30),
+          child: _loginForm(),
         ),
       ),
+    );
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+      title: const Text('Giris Yap'),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      centerTitle: true,
     );
   }
 
@@ -35,12 +45,20 @@ class LoginView extends StatelessWidget {
         return Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _emailField(),
-              _passwordField(),
-              _submitButton(),
-              _signUpButton(),
+              Flex(
+                direction: Axis.vertical,
+                children: [
+                  _emailField(),
+                  _passwordField(),
+                  _submitButton(),
+                ],
+              ),
+              Flex(
+                direction: Axis.vertical,
+                children: [_signUpButton(), _googleSignIn()],
+              ),
             ],
           ),
         );
@@ -108,7 +126,7 @@ class LoginView extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
         return TextButton(
-          onPressed: () {},
+          onPressed: () => context.read<AuthNavigationCubit>().showSignUp(),
           child: Text(
             'Hemen Kayit Ol',
             style: Theme.of(context)

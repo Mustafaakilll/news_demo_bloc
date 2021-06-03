@@ -3,13 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:news_demo_bloc/authentication/sign_up_bloc/sign_up_view.dart';
-import 'authentication/log_in_bloc/login_view.dart';
 // ignore: library_prefixes
 import 'package:path_provider/path_provider.dart' as pathProvider;
 
 import 'app_navigation_bloc/app_navigation_cubit.dart';
-import 'app_navigator.dart';
+import 'app_navigation_bloc/app_navigator.dart';
 import 'authentication/auth_repository.dart';
 import 'news_bloc/news_repository.dart';
 import 'settings_bloc/theme_bloc/theme_bloc.dart';
@@ -46,8 +44,9 @@ class MyApp extends StatelessWidget {
                 RepositoryProvider(create: (_) => NewsRepository(Dio())),
               ],
               child: BlocProvider(
-                create: (context) => AppNavigationCubit(),
-                child: SignUpView(),
+                create: (context) =>
+                    AppNavigationCubit(context.read<AuthRepository>()),
+                child: AppNavigator(),
               ),
             ),
           );

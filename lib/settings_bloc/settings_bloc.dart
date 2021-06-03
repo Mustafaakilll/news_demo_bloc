@@ -1,20 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../app_navigation_bloc/app_navigation_cubit.dart';
 
-import '../authentication/auth_repository.dart';
 import 'settings_event.dart';
 import 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
-  SettingsBloc(this.authRepo) : super(SettingsInitial());
+  SettingsBloc(this.appNavigationCubit) : super(SettingsInitial());
 
-  final AuthRepository authRepo;
+  final AppNavigationCubit appNavigationCubit;
 
   @override
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
     if (event is LogOutEvent) {
-      //TODO: CIKIS YAP
-      final isSuccess = authRepo.logOut();
-      if (isSuccess) print('Basarili');
+      appNavigationCubit.signOut();
+    } else if (event is GoDevInfo) {
+      yield DevInfoState();
     }
   }
 }
