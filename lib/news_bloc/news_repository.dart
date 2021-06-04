@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:turkish/turkish.dart';
 
 import '../model/news_article.dart';
 
@@ -23,5 +24,15 @@ class NewsRepository {
     } else {
       throw Exception('Mesaj ALirken Hata');
     }
+  }
+
+  List<NewsArticle> searchNews(List<NewsArticle> allNews, String keyword) {
+    final _filteredNews = <NewsArticle>[];
+    allNews.forEach((element) {
+      if (element.title.toLowerCaseTr().contains(keyword.toLowerCaseTr())) {
+        _filteredNews.add(element);
+      }
+    });
+    return _filteredNews;
   }
 }

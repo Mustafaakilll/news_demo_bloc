@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../search_news_bloc/search_news_view.dart';
 import '../news_bloc/news_page.dart';
 import '../settings_bloc/settings_page.dart';
 import 'bottom_nav_bar_cubit.dart';
@@ -18,7 +19,7 @@ class BottomNavBarNavigator extends StatelessWidget {
             } else if (state is SettingsPageState) {
               return SettingsPage();
             } else {
-              return const Text('Arama Sayfasi');
+              return const SearchNewsPage();
             }
           },
         ),

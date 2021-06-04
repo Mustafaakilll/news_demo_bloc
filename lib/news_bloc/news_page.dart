@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,10 +12,9 @@ class NewsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NewsBloc>(
-      create: (context) =>
-          NewsBloc(context.read<NewsRepository>())..add(GetNews()),
+      create: (context) => NewsBloc(context.read<NewsRepository>()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Haberler')),
+        appBar: _appBar(),
         body: BlocBuilder<NewsBloc, NewsState>(
           builder: (context, state) {
             if (state is NewsLoadingState) {
@@ -36,6 +34,10 @@ class NewsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  AppBar _appBar() {
+    return AppBar(title: const Text('Haberler'));
   }
 
   Widget _successBody(BuildContext context, NewsArticle news) {

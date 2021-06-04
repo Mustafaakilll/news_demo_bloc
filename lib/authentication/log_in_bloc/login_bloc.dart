@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_demo_bloc/app_navigation_bloc/app_navigation_cubit.dart';
 
+import '../../app_navigation_bloc/app_navigation_cubit.dart';
 import '../auth_repository.dart';
 import '../form_submission_state.dart';
 import 'login_event.dart';
