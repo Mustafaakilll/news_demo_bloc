@@ -9,6 +9,26 @@ import 'news_repository.dart';
 class NewsPage extends StatelessWidget {
   const NewsPage({Key? key}) : super(key: key);
 
+  static const List<String> categoryUrls = [
+    'technology',
+    'sports',
+    'business',
+    'health',
+    'entertainment',
+    'science',
+  ];
+  static const List<String> categoryNames = [
+    'Teknoloji',
+    'Spor',
+    'Ekonomi',
+    'Sağlık',
+    'Eğlence',
+    'Bilim'
+  ];
+
+  static const _placeholder =
+      'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.brownweinraub.com%2Fwp-content%2Fuploads%2F2017%2F09%2Fplaceholder.jpg&f=1&nofb=1';
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NewsBloc>(
@@ -22,11 +42,34 @@ class NewsPage extends StatelessWidget {
             } else if (state is NewsLoadedFailureState) {
               return Center(child: Text(state.exception.toString()));
             } else if (state is NewsLoadedSuccessState) {
-              return ListView.builder(
-                itemCount: state.news.length,
-                itemBuilder: (context, index) {
-                  return _successBody(context, state.news[index]);
-                },
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 50,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categoryNames.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ActionChip(
+                          label: Text(categoryNames[index]),
+                          onPressed: () => context
+                              .read<NewsBloc>()
+                              .add(SortNewsByCategory(categoryUrls[index])),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 10),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.news.length,
+                      itemBuilder: (context, index) {
+                        return _successBody(context, state.news[index]);
+                      },
+                    ),
+                  ),
+                ],
               );
             }
             return const Center(child: Text('buraya gelirse sictik'));
@@ -46,7 +89,7 @@ class NewsPage extends StatelessWidget {
       child: Card(
         child: Row(
           children: [
-            _newsImage(news.urlToImage!),
+            _newsImage(news.urlToImage ?? _placeholder),
             const SizedBox(width: 10),
             _newsTitle(news.title),
             const Icon(Icons.keyboard_arrow_right),
@@ -75,8 +118,8 @@ class NewsPage extends StatelessWidget {
     );
   }
 
-  dynamic _goNewsDetail(BuildContext context, NewsArticle news) {
-    return Navigator.of(context).push(
+  void _goNewsDetail(BuildContext context, NewsArticle news) {
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => NewsDetailPage(
           news_title: news.title,

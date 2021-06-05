@@ -27,6 +27,14 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       } on Exception catch (e) {
         yield NewsLoadedFailureState(e);
       }
+    } else if (event is SortNewsByCategory) {
+      yield NewsLoadingState();
+      try {
+        final news = await _newsRepo.getNewsByCategory(event.category);
+        yield NewsLoadedSuccessState(news);
+      } on Exception catch (e) {
+        yield NewsLoadedFailureState(e);
+      }
     }
   }
 }

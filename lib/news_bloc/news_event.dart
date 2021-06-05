@@ -6,5 +6,14 @@ abstract class NewsEvent extends Equatable {
 
 class GetNews extends NewsEvent {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
+}
+
+class SortNewsByCategory extends NewsEvent {
+  final String category;
+
+  SortNewsByCategory(this.category);
+
+  @override
+  List<Object?> get props => [category];
 }
