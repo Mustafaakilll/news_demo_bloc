@@ -25,16 +25,17 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key, this.isLightTheme}) : super(key: key);
+
   final isLightTheme;
 
-  const MyApp({Key? key, this.isLightTheme}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
           ThemeBloc(ThemeRepository(isLightTheme: isLightTheme), isLightTheme),
       child: BlocBuilder<ThemeBloc, ThemeData>(
-        builder: (context, state) {
+        builder: (_, state) {
           return MaterialApp(
             title: 'Flutter Demo',
             theme: state,

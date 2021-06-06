@@ -14,20 +14,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
+    /// UPADTE LOGIN STATE'S PASSWORD
     if (event is LoginPasswordChanged) {
       yield state.copyWith(password: event.password);
+
+      /// UPADTE LOGIN STATE'S EMAIL
     } else if (event is LoginEmailChanged) {
       yield state.copyWith(email: event.email);
+
+      /// SUBMIT LOGIN
     } else if (event is LoginSubmitted) {
       yield state.copyWith(formStatus: FormSubmitting());
       try {
         final user =
             await authRepo.signInWithEmail(state.email, state.password);
         yield state.copyWith(formStatus: SubmissionSuccess(user));
+
+        /// GO TO NEWS SCREEN
         appNavigationCubit.showSession();
       } on Exception catch (e) {
         yield state.copyWith(formStatus: SubmissionFailure(e));
       }
+
+      /// LOGIN WITH GOOGLE
     } else if (event is LoginWithGoogle) {
       try {
         final user = await authRepo.signInWithGoogle();

@@ -39,7 +39,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       try {
         final user = await authRepo.signInWithGoogle();
         yield state.copyWith(formStatus: SubmissionSuccess(user));
-        appNavigationCubit.showSession();
       } on Exception catch (e) {
         yield state.copyWith(formStatus: SubmissionFailure(e));
       }

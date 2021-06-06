@@ -15,7 +15,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(
+      create: (_) => LoginBloc(
         context.read<AuthRepository>(),
         context.read<AppNavigationCubit>(),
       ),
@@ -40,37 +40,39 @@ class LoginView extends StatelessWidget {
   }
 
   Widget _loginForm() {
-    return BlocConsumer<LoginBloc, LoginState>(
-      builder: (context, state) {
-        return Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flex(
-                direction: Axis.vertical,
-                children: [
-                  _emailField(),
-                  _passwordField(),
-                  _submitButton(),
-                ],
-              ),
-              Flex(
-                direction: Axis.vertical,
-                children: [_signUpButton(), _googleSignIn()],
-              ),
-            ],
-          ),
-        );
-      },
+    return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         final formStatus = state.formStatus;
+
+        /// IF LOGIN FAILED SHOW ERROR ON SNACKBAR
         if (formStatus is SubmissionFailure) {
           _snackBarMessenger(formStatus.exception.toString(), context);
+
+          /// IF LOGIN SUCCESS SHOW USER EMAIL ON SNACKBAR
         } else if (formStatus is SubmissionSuccess) {
           _snackBarMessenger('Hos Geldiniz ${formStatus.user!.email}', context);
         }
       },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flex(
+              direction: Axis.vertical,
+              children: [
+                _emailField(),
+                _passwordField(),
+                _submitButton(),
+              ],
+            ),
+            Flex(
+              direction: Axis.vertical,
+              children: [_signUpButton(), _googleSignIn()],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -78,7 +80,7 @@ class LoginView extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
         return TextFormField(
-          validator: (value) => context.read<LoginBloc>().state.isValidEmail
+          validator: (value) => state.isValidEmail
               ? null
               : 'Gecerli bir email girdiniziden emin olun',
           onChanged: (value) =>
@@ -96,7 +98,7 @@ class LoginView extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
         return TextFormField(
-          validator: (value) => context.read<LoginBloc>().state.isValidPassword
+          validator: (value) => state.isValidPassword
               ? null
               : 'Sifre en az 6 karakter olmalidir.',
           onChanged: (value) =>
@@ -113,9 +115,17 @@ class LoginView extends StatelessWidget {
 
   Widget _submitButton() {
     return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
+      builder: (context, _) {
         return ElevatedButton(
-          onPressed: () => context.read<LoginBloc>().add(LoginSubmitted()),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).backgroundColor,
+          ),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              context.read<LoginBloc>().add(LoginSubmitted());
+              FocusScope.of(context).unfocus();
+            }
+          },
           child: const Text('Giris Yap'),
         );
       },
@@ -124,16 +134,10 @@ class LoginView extends StatelessWidget {
 
   Widget _signUpButton() {
     return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
+      builder: (context, _) {
         return TextButton(
           onPressed: () => context.read<AuthNavigationCubit>().showSignUp(),
-          child: Text(
-            'Hemen Kayit Ol',
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(color: Colors.blue),
-          ),
+          child: const Text('Hemen Kayit Ol'),
         );
       },
     );
@@ -141,9 +145,12 @@ class LoginView extends StatelessWidget {
 
   Widget _googleSignIn() {
     return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
+      builder: (context, _) {
         return ElevatedButton(
           onPressed: () => context.read<LoginBloc>().add(LoginWithGoogle()),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).backgroundColor,
+          ),
           child: const Text('Google ile giris yap'),
         );
       },
@@ -152,11 +159,11 @@ class LoginView extends StatelessWidget {
 
   void _snackBarMessenger(String text, BuildContext context) {
     final snackBar = SnackBar(
-        content: Text(
-          text,
-          style: TextStyle(color: Theme.of(context).primaryColor),
-        ),
-        backgroundColor: Theme.of(context).backgroundColor);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      content: Text(text),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 }

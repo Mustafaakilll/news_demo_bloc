@@ -24,7 +24,11 @@ class AuthRepository {
         throw Exception('Kullanici Bulunamadi');
       } else if (e.code == 'wrong-password') {
         throw Exception('Sifre Yanlis');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Hatali Eposta');
       }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -38,6 +42,8 @@ class AuthRepository {
         throw Exception('Zayif Parola');
       } else if (e.code == 'email-already-in-use') {
         throw Exception('Eposta Kullanimda');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Gecerli bir Eposta adresi giriniz');
       }
     } catch (err) {
       throw Exception('Hata $err');

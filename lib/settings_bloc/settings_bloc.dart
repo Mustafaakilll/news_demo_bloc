@@ -13,8 +13,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
     if (event is LogOutEvent) {
       appNavigationCubit.signOut();
-    } else if (event is GoDevInfo) {
-      yield DevInfoState();
     }
   }
 }

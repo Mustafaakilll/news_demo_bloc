@@ -15,12 +15,10 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeData> {
   Stream<ThemeData> mapEventToState(ThemeEvent event) async* {
     if (event is LightThemeEvent) {
       themeRepo.isLightTheme = !themeRepo.isLightTheme;
-      debugPrint('Aydinlik Tema');
       await themeRepo.setTheme();
       yield ThemeData.light();
     }
     if (event is DarkThemeEvent) {
-      debugPrint('Karanlik Tema');
       themeRepo.isLightTheme = !themeRepo.isLightTheme;
       await themeRepo.setTheme();
       yield ThemeData.dark();

@@ -45,7 +45,7 @@ class SearchNewsPage extends StatelessWidget {
 
   PreferredSize _appBar() {
     return PreferredSize(
-      preferredSize: Size.fromHeight(AppBar().preferredSize.height),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: BlocBuilder<SearchNewsBloc, SearchNewsState>(
         builder: (context, state) {
           return Padding(
@@ -98,8 +98,8 @@ class SearchNewsPage extends StatelessWidget {
     );
   }
 
-  dynamic _goNewsDetail(BuildContext context, NewsArticle news) {
-    return Navigator.of(context).push(
+  void _goNewsDetail(BuildContext context, NewsArticle news) {
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => NewsDetailPage(
           news_title: news.title,

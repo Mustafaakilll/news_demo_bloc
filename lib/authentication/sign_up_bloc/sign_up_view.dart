@@ -40,37 +40,39 @@ class SignUpView extends StatelessWidget {
   }
 
   Widget _signUpForm() {
-    return BlocConsumer<SignUpBloc, SignUpState>(
+    return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
         final formStatus = state.formStatus;
+
+        /// IF LOGIN FAILED SHOW ERROR ON SNACKBAR
         if (formStatus is SubmissionFailure) {
           _snackBarMessenger(formStatus.exception.toString(), context);
+
+          /// IF LOGIN SUCCESS SHOW USER EMAIL ON SNACKBAR
         } else if (formStatus is SubmissionSuccess) {
           _snackBarMessenger('Hos Geldiniz ${formStatus.user!.email}', context);
         }
       },
-      builder: (context, state) {
-        return Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flex(
-                direction: Axis.vertical,
-                children: [
-                  _emailField(),
-                  _passwordField(),
-                  _submitButton(),
-                ],
-              ),
-              Flex(
-                direction: Axis.vertical,
-                children: [_signInButton(), _googleSignIn()],
-              ),
-            ],
-          ),
-        );
-      },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flex(
+              direction: Axis.vertical,
+              children: [
+                _emailField(),
+                _passwordField(),
+                _submitButton(),
+              ],
+            ),
+            Flex(
+              direction: Axis.vertical,
+              children: [_signInButton(), _googleSignIn()],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -78,7 +80,7 @@ class SignUpView extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return TextFormField(
-          validator: (value) => context.read<SignUpBloc>().state.isValidEmail
+          validator: (value) => state.isValidEmail
               ? null
               : 'Gecerli bir email girdiniziden emin olun',
           onChanged: (value) =>
@@ -96,7 +98,7 @@ class SignUpView extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return TextFormField(
-          validator: (value) => context.read<SignUpBloc>().state.isValidPassword
+          validator: (value) => state.isValidPassword
               ? null
               : 'Sifre en az 6 karakter olmalidir.',
           onChanged: (value) =>
@@ -115,7 +117,15 @@ class SignUpView extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return ElevatedButton(
-          onPressed: () => context.read<SignUpBloc>().add(SignUpSubmitted()),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).backgroundColor,
+          ),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              context.read<SignUpBloc>().add(SignUpSubmitted());
+              FocusScope.of(context).unfocus();
+            }
+          },
           child: const Text('Kayit Ol'),
         );
       },
@@ -127,13 +137,7 @@ class SignUpView extends StatelessWidget {
       builder: (context, state) {
         return TextButton(
           onPressed: () => context.read<AuthNavigationCubit>().showLogin(),
-          child: Text(
-            'Hemen Giris Yap',
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(color: Colors.blue),
-          ),
+          child: const Text('Hemen Giris Yap'),
         );
       },
     );
@@ -144,6 +148,9 @@ class SignUpView extends StatelessWidget {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: () => context.read<SignUpBloc>().add(SignInWithGoogle()),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).backgroundColor,
+          ),
           child: const Text('Google ile giris yap'),
         );
       },
@@ -152,11 +159,11 @@ class SignUpView extends StatelessWidget {
 
   void _snackBarMessenger(String text, BuildContext context) {
     final snackBar = SnackBar(
-        content: Text(
-          text,
-          style: TextStyle(color: Theme.of(context).primaryColor),
-        ),
-        backgroundColor: Theme.of(context).backgroundColor);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      content: Text(text),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 }

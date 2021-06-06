@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../utils/app_constants.dart';
 import '../model/news_article.dart';
 import '../news_detail_page.dart';
 import 'news_bloc.dart';
@@ -8,26 +9,6 @@ import 'news_repository.dart';
 
 class NewsPage extends StatelessWidget {
   const NewsPage({Key? key}) : super(key: key);
-
-  static const List<String> categoryUrls = [
-    'technology',
-    'sports',
-    'business',
-    'health',
-    'entertainment',
-    'science',
-  ];
-  static const List<String> categoryNames = [
-    'Teknoloji',
-    'Spor',
-    'Ekonomi',
-    'Sağlık',
-    'Eğlence',
-    'Bilim'
-  ];
-
-  static const _placeholder =
-      'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.brownweinraub.com%2Fwp-content%2Fuploads%2F2017%2F09%2Fplaceholder.jpg&f=1&nofb=1';
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +70,7 @@ class NewsPage extends StatelessWidget {
       child: Card(
         child: Row(
           children: [
-            _newsImage(news.urlToImage ?? _placeholder),
+            _newsImage(news.urlToImage ?? placeholder),
             const SizedBox(width: 10),
             _newsTitle(news.title),
             const Icon(Icons.keyboard_arrow_right),

@@ -17,6 +17,8 @@ class AppNavigator extends StatelessWidget {
           pages: [
             if (state is UnknownSessionState)
               MaterialPage(child: LoadingView()),
+
+            /// IF USER NOT LOGIN YET GO TO AUTH SCREEN
             if (state is UnauthenticatedState)
               MaterialPage(
                 child: BlocProvider(
@@ -25,6 +27,8 @@ class AppNavigator extends StatelessWidget {
                   child: const AuthNavigator(),
                 ),
               ),
+
+            /// IF USER SIGNED IN GO TO NEWS SCREEN
             if (state is AuthenticatedState)
               MaterialPage(child: BottomNavBarNavigator()),
           ],
